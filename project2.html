@@ -1,0 +1,366 @@
+
+<!-- saved from url=(0047)http://ww2.cs.fsu.edu/~porter/cop4610/project2/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Operating Systems</title>
+<link type="text/css" rel="stylesheet" href="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/style.css"><script type="text/javascript" charset="utf-8" src="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/page_context.js"></script><style type="text/css"></style></head>
+
+<body bgcolor="#FFFFFF" screen_capture_injected="true">
+
+<p><a href="http://www.cs.fsu.edu/~lacher/courses/COP4610/"><font size="2" face="Verdana">Operating Systems</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/index.html"><font size="2" face="Verdana">Project Pages</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project2"><font size="2" face="Verdana">Project 2</font></a></p>
+
+<h1 align="left"><font size="3" face="Verdana">Project
+2-Concurrency with Processes</font></h1>
+
+<p><font size="2" face="Verdana"><strong>Description and
+Objectives</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">In this project, you will
+    gain experience with concurrency by spawning child processes.  Note that you may begin with my example solution for project 1 if weren't happy with your project 1.  Get the files at <font color="ff0000">~cop4610p/solutions/proj1</font>.</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Details</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your task is to take your
+    project 1 shell and add the ability to run processes in the
+    background. Note that you already learned how to spawn
+    parallel processes in project 1, but background processing
+    will allow your shell to continue running while another
+    process is running. In other words, you won't have to wait on
+    it to finish. The symbol to denote that a command should run
+    in the background is the ampersand (</font><font color="#FF0000" size="2" face="Verdana">&amp;</font><font size="2" face="Verdana">). Just like the redirection
+    operators from project 1 (</font><font color="#FF0000" size="2" face="Verdana">&lt;</font><font size="2" face="Verdana"> and </font><font color="#FF0000" size="2" face="Verdana">&gt;</font><font size="2" face="Verdana">),
+    you can assume whitespace on both sides of the </font><font color="#FF0000" size="2" face="Verdana">&amp;</font><font size="2" face="Verdana"> symbol. Your parsing algorithm will
+    simply add in a check for this symbol. Also, you will want to
+    store some type of flag in your command structure to decide
+    whether a command should be executed normally or in the
+    background.</font></p>
+    <p><font size="2" face="Verdana">When a command is set to run
+    in the background, you will follow these steps when
+    executing:</font></p>
+    <blockquote>
+        <p><font color="#000000" size="2" face="Verdana">(1) Give
+        the command a job ID (JID) and store the JID, process ID
+        (PID), and command itself in an array. This will require
+        some type of structure to hold the JID, PID, and command.
+        In other words, the type of elements in the array are
+        structures with the JID, PID, and command. Each structure
+        will be placed in the array after the last existing
+        structure. The JID will start at 1 and will always be one
+        more than the last existing structure's JID. For example,
+        if your array is empty, the next background command will
+        occupy the first spot in the array and have JID 1. As
+        another example, if the last existing structure is at the
+        fourth spot in the array and has JID 8, the next one will
+        be added in the fifth spot and have JID 9. You can assume
+        a max of 100 items in the array at any one time.</font></p>
+        <p><font color="#000000" size="2" face="Verdana">(2)
+        Print the following message to the screen:</font></p>
+        <blockquote>
+            <p><font color="#FF0000" size="2" face="Verdana">[JID]
+            [PID]</font></p>
+            <p><font color="#000000" size="2" face="Verdana">where
+            </font><font color="#FF0000" size="2" face="Verdana">[JID]</font><font color="#000000" size="2" face="Verdana"> is the job
+            ID in brackets and </font><font color="#FF0000" size="2" face="Verdana">[PID]</font><font color="#000000" size="2" face="Verdana"> is the
+            process ID in brackets.</font></p>
+        </blockquote>
+    </blockquote>
+</blockquote>
+
+<blockquote>
+    <blockquote>
+        <p><font size="2" face="Verdana">(3) Run the command like
+        normal in your child process.</font></p>
+        <p><font size="2" face="Verdana">(4) Your parent process
+        will not wait on a background command in the same way you
+        waited in project 1. Instead, your command prompt loop
+        will periodically wait with a special flag called </font><font color="#FF0000" size="2" face="Verdana">WNOHANG</font><font size="2" face="Verdana">. This will simultaneously let
+        you check for terminated children and not cause your
+        program to stop and wait. Note that the wait with the
+        special flag is still necessary to avoid zombie
+        processes.</font></p>
+        <p><font size="2" face="Verdana">(5) When your wait
+        command detects that a child ended, print the following
+        message to the screen:</font></p>
+        <blockquote>
+            <p><font color="#FF0000" size="2" face="Verdana">[JID]
+            Done COMMAND</font></p>
+            <p><font color="#000000" size="2" face="Verdana">where
+            </font><font color="#FF0000" size="2" face="Verdana">[JID]</font><font color="#000000" size="2" face="Verdana"> is the job
+            ID in brackets, </font><font color="#FF0000" size="2" face="Verdana">Done</font><font color="#000000" size="2" face="Verdana"> is literally the word
+            "Done", and </font><font color="#FF0000" size="2" face="Verdana">COMMAND</font><font color="#000000" size="2" face="Verdana"> is the
+            command that was run. You can space them out a bit
+            more if you want with tabs, for example. </font></p>
+        </blockquote>
+    </blockquote>
+    <p><font color="#000000" size="2" face="Verdana">You will
+    also create a new built-in command called </font><font color="#FF0000" size="2" face="Verdana">jobs</font><font color="#000000" size="2" face="Verdana">. While we aren't
+    going to implement job control functionality, you should make
+    </font><font color="#FF0000" size="2" face="Verdana">jobs</font><font color="#000000" size="2" face="Verdana"> simply print the
+    entire array of background tasks in the format of (5) above,
+    except printing </font><font color="#FF0000" size="2" face="Verdana">[PID]</font><font color="#000000" size="2" face="Verdana"> instead of </font><font color="#FF0000" size="2" face="Verdana">Done</font><font color="#000000" size="2" face="Verdana">. Only make it print actual jobs, not
+    free array slots.</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Background Processing</strong></font></p>
+
+<blockquote>
+    <p align="left"><font size="2" face="Verdana">Background
+    processes are one way to achieve concurrency. The upside is
+    that they are easy to work with compared to threads. The
+    downside, among other things, is the overhead with creating
+    new processes as opposed to new threads. So, let's take a
+    closer look at how we run processes in the background.</font></p>
+    <p align="left"><font size="2" face="Verdana">First, the </font><font color="#FF0000" size="2" face="Verdana">&amp;</font><font size="2" face="Verdana"> operator will indicate a command is
+    to be run in the background. You will want your command
+    structure to have some type of flag set to "yes" or
+    "no" for running in the background. Otherwise, you
+    are simply parsing commands like the first project.</font></p>
+    <p align="left"><font size="2" face="Verdana">Next, you'll
+    need some type of array to hold information for background
+    processes. This information includes the job ID (JID),
+    process ID (PID), and command itself. So, you will need a
+    structure similar to your command structure to hold this
+    information. Since we're assuming a max of 100 jobs, you can
+    simply create a global array with 100 slots. You will also
+    find that keeping a current size variable is useful.</font></p>
+    <p align="left"><font size="2" face="Verdana">When a command
+    is to be executed in the background, you will have to add it
+    after the last existing job in the array. Your new entry will
+    have a JID of one more than this last job. Of course, if the
+    array is empty, your new entry will have JID 1. Next, you can
+    print the JID and PID. Remember, the PID is returned to the
+    parent process, so you'll have this information. Now, the
+    crucial difference here is not to wait for the child process
+    to finish, but to realize that waiting is still needed
+    periodically. Take a look at </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project2/background.c" target="_blank"><font size="2" face="Verdana">background.c</font></a><font size="2" face="Verdana">. Essentially, it loops forever
+    asking how long you want to sleep. Each time you give it an
+    amount to sleep, a new child process is created for that
+    sleep command. Notice that the sleeping won't actually stop
+    it from constantly asking the question. This is because the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/waitpid.html" target="_blank"><font size="2" face="Verdana">waitpid()</font></a><font size="2" face="Verdana"> is using the </font><font color="#FF0000" size="2" face="Verdana">WNOHANG</font><font size="2" face="Verdana"> flag. This means it returns
+    immediately. But, remember that this function also does
+    necessary clean up, so we need to include it. Our strategy is
+    then to periodically check for a terminated child. This has
+    the downside of not necessarily informing us as early as
+    possible. However, an alternate strategy using signals can do
+    this. But, signals can cause their own strange issues, such
+    as causing certain I/O functions to fail. So, we'll stick
+    with our first strategy. Also notice that I gave </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/waitpid.html" target="_blank"><font size="2" face="Verdana">waitpid()</font></a><font size="2" face="Verdana"> a PID of -1 to wait on. This means
+    we want to check if any child process has terminated. You
+    could have multiple children processes running in the
+    background simultaneously. This is a good way to check for
+    any that have terminated. Note that you don't want to use
+    this strategy for foreground processes (from project 1),
+    because it will also try waiting on any background processes
+    that may be running. So, don't change any of your waiting
+    code from project 1 for foreground processes. The main
+    difference in my example and what your shell will do is that
+    you're recording and printing more information.</font></p>
+    <p><font size="2" face="Verdana">Finally, we have the </font><font color="#FF0000" size="2" face="Verdana">jobs</font><font size="2" face="Verdana"> command. This will simply print out
+    your array. Let's take a look at a potential array structure:</font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">jobs[0]:
+        {1, 2948, "sleep 20"}<br>
+        jobs[1]: {2, 2949, "sleep 10"}<br>
+        jobs[2]: {3, 2950, "sleep 30"}<br>
+        jobs[3]: {..., ..., ...}<br>
+        jobs[4]: {..., ..., ...}<br>
+        ...</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">The brackets are just my way
+    of indicating a set of data. The first item is the JID,
+    second is the PID, third is the command itself. So, when
+    printing the info, we'll print indices 0 through 2. When
+    going to add a new job, we'll add it at index 3 like so:</font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">jobs[0]:
+        {1, 2948, "sleep 20"}<br>
+        jobs[1]: {2, 2949, "sleep 10"}<br>
+        jobs[2]: {3, 2950, "sleep 30"}<br>
+        jobs[3]: {4, 2951, "sleep 40"}<br>
+        jobs[4]: {..., ..., ...}<br>
+        ...</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">Each time you add a job, you
+    increment your size variable to keep track of how many jobs
+    are currently in your array. As for removing jobs, you may
+    need to do some shifting. For example, let's say that jobs[1]
+    will finish before the others. So, when we go to remove it,
+    we'll shift the stuff below it up like so:</font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">jobs[0]:
+        {1, 2948, "sleep 20"}<br>
+        jobs[1]: {3, 2950, "sleep 30"}<br>
+        jobs[2]: {4, 2951, "sleep 40"}<br>
+        jobs[3]: {4, 2951, "sleep 40"}<br>
+        jobs[4]: {..., ..., ...}<br>
+        ...</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">Notice that jobs[3] still
+    contains old data. But, this doesn't matter because we're
+    keeping track of the size. After removing jobs[1], we know we
+    only have 3 jobs. Hence, you don't have to worry about
+    "clearing out" old data. Just do the shifting. The
+    only case where shifting isn't necessary is when removing the
+    last job.</font></p>
+    <p><font size="2" face="Verdana">Ok, this should be enough
+    info to complete the project!</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Sample Runs</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Here are some sample runs
+    that you can use to compare your output to. Note that your
+    output doesn't have to match exactly, but it couldn't hurt.</font></p>
+    <blockquote>
+        <p><font size="2" face="Verdana">Note that I am typing </font><font color="#FF0000" size="2" face="Verdana">jobs</font><font size="2" face="Verdana"> every few seconds to let you see
+        a couple things. First, that you can keep doing things
+        while the sleeps are running. Second, to illustrate that
+        the termination status is being checked during each
+        command-loop iteration. Note that the lines with </font><font color="#FF0000" size="2" face="Verdana">Done</font><font size="2" face="Verdana"> in them aren't part of the jobs
+        array. They just happen to print because they were done
+        by the time I typed a new command (which checks for
+        terminated children before printing the prompt).</font></p>
+        <p><font color="#FF0000" size="2" face="Verdana">porter@myshell:/home/grads/porter&gt;date
+        &amp;<br>
+        [1] 24177<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;Wed Jan 19 16:27:21
+        EST 2011<br>
+        <br>
+        [1] Done date<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 5 &amp;<br>
+        [1] 24204<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 10 &amp;<br>
+        [2] 24208<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 20 &amp;<br>
+        [3] 24209<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [1] 24204 sleep 5<br>
+        [2] 24208 sleep 10<br>
+        [3] 24209 sleep 20<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [1] 24204 sleep 5<br>
+        [2] 24208 sleep 10<br>
+        [3] 24209 sleep 20<br>
+        [1] Done sleep 5<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [2] 24208 sleep 10<br>
+        [3] 24209 sleep 20<br>
+        [2] Done sleep 10<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [3] 24209 sleep 20<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [3] 24209 sleep 20<br>
+        [3] Done sleep 20<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 10 &amp;<br>
+        [1] 24285<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 9 &amp;<br>
+        [2] 24286<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 8 &amp;<br>
+        [3] 24287<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 7 &amp;<br>
+        [4] 24288<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 6 &amp;<br>
+        [5] 24293<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 5 &amp;<br>
+        [6] 24294<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [1] 24285 sleep 10<br>
+        [2] 24286 sleep 9<br>
+        [3] 24287 sleep 8<br>
+        [4] 24288 sleep 7<br>
+        [5] 24293 sleep 6<br>
+        [6] 24294 sleep 5<br>
+        [1] Done sleep 10<br>
+        [2] Done sleep 9<br>
+        [3] Done sleep 8<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [4] 24288 sleep 7<br>
+        [5] 24293 sleep 6<br>
+        [6] 24294 sleep 5<br>
+        [4] Done sleep 7<br>
+        [5] Done sleep 6<br>
+        [6] Done sleep 5<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;<br>
+        porter@myshell:/home/grads/porter&gt;sleep 5 &amp;<br>
+        [1] 24930<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 10 &amp;<br>
+        [2] 24931<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [1] 24930 sleep 5<br>
+        [2] 24931 sleep 10<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [1] 24930 sleep 5<br>
+        [2] 24931 sleep 10<br>
+        [1] Done sleep 5<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;sleep 20 &amp;<br>
+        [3] 24935<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [2] 24931 sleep 10<br>
+        [3] 24935 sleep 20<br>
+        [2] Done sleep 10<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [3] 24935 sleep 20<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        [3] 24935 sleep 20<br>
+        [3] Done sleep 20<br>
+        <br>
+        porter@myshell:/home/grads/porter&gt;jobs<br>
+        </font></p>
+    </blockquote>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Grading</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your code uses good
+    programming practices (30%).</font></p>
+    <p><font size="2" face="Verdana">Your shell can run
+    background commands correctly (50%).</font></p>
+    <p><font size="2" face="Verdana">Your shell has the </font><font color="#FF0000" size="2" face="Verdana">jobs</font><font size="2" face="Verdana"> command (20%).</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Submitting</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Submit two files: </font><font color="#FF0000" size="2" face="Verdana">myshell.c</font><font size="2" face="Verdana"> containing your updated shell source
+    code with background processing, and </font><font color="#FF0000" size="2" face="Verdana">makefile</font><font size="2" face="Verdana"> which builds an executable named </font><font color="#FF0000" size="2" face="Verdana">myshell.x</font><font size="2" face="Verdana">. Do this with </font><font color="#FF0000" size="2" face="Verdana">~cop4610p/submitscripts/proj2submit.sh</font><font size="2" face="Verdana">.</font></p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+
+<iframe id="rdbIndicator" width="100%" height="270" border="0" src="./project2_files/indicator.html" style="display: none; border: 0; position: fixed; left: 0; top: 0; z-index: 2147483647"></iframe></body></html>

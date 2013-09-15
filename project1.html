@@ -1,0 +1,610 @@
+
+<!-- saved from url=(0047)http://ww2.cs.fsu.edu/~porter/cop4610/project1/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Operating Systems</title>
+<style type="text/css"></style><link type="text/css" rel="stylesheet" href="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/style.css"><script type="text/javascript" charset="utf-8" src="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/page_context.js"></script></head>
+
+<body bgcolor="#FFFFFF" screen_capture_injected="true">
+
+<p><a href="http://www.cs.fsu.edu/~lacher/courses/COP4610/"><font size="2" face="Verdana">Operating Systems</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/"><font size="2" face="Verdana">Project Pages</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="./project1_files/project1.html"><font size="2" face="Verdana">Project 1</font></a></p>
+
+<h1 align="left"><font size="3" face="Verdana">Project 1-UNIX
+Shell</font></h1>
+
+<p><font size="2" face="Verdana"><strong>Description and
+Objectives</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">In this project, you will
+    write your own UNIX shell that behaves similar to the tcsh
+    shell in linprog. The shell is the part of the OS that
+    processes commands. You will learn how to tokenize strings,
+    create and run built-in commands, run external commands, use
+    file redirection, and expand environment variables.</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Details</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">You will create a shell
+    similar to the tcsh shell in linprog. The tcsh shell is the
+    default shell in linprog. Your shell will be much simpler,
+    but will behave similarly. Your program will essentially
+    execute the following steps:</font></p>
+    <blockquote>
+        <p><font size="2" face="Verdana">(1) Print a prompt to
+        the user, waiting for them to type a command and press
+        enter.</font></p>
+        <p><font size="2" face="Verdana">(2) Parse the command,
+        ultimately forming the command's arguments.</font></p>
+        <p><font size="2" face="Verdana">(3) Execute the command.</font></p>
+        <p><font size="2" face="Verdana">(4) Repeat step (1)
+        until the user types the </font><font color="#FF0000" size="2" face="Verdana">exit</font><font size="2" face="Verdana"> command.</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">Let's go over each of these.
+    </font></p>
+    <p><font size="2" face="Verdana">For (1), you will print a
+    prompt with the format </font><font color="#FF0000" size="2" face="Verdana">[USER]@myshell:[CWD]&gt;</font><font color="#000000" size="2" face="Verdana">, </font><font size="2" face="Verdana">where </font><font color="#FF0000" size="2" face="Verdana">[USER]</font><font size="2" face="Verdana"> represents the user's username and </font><font color="#FF0000" size="2" face="Verdana">[CWD]</font><font size="2" face="Verdana"> represents the current working
+    directory. For example, </font><font color="#FF0000" size="2" face="Verdana">porter@myshell:/bin&gt;</font><font color="#000000" size="2" face="Verdana">. </font><font size="2" face="Verdana">You will then wait for the user to
+    type a command and press enter. You can assume the command
+    will be at most 80 characters and there will be at most 9 command arguments (including the command name itself). Please make your prompt print
+    with at least one leading newline character. This will help
+    automate testing.</font></p>
+    <p><font size="2" face="Verdana">Once you have the command,
+    it's time to do step (2). You will take the command and break
+    it into tokens. For our simplified shell, you will use
+    whitespace as the delimiter. That is, you will assume each
+    token is separated by whitespace. You will then go through
+    each token and do some processing, ultimately forming the
+    arguments of your command.</font></p>
+    <p><font size="2" face="Verdana">Next, you will go to step
+    (3) and run the command. There are two types of commands:
+    built-in commands and external commands. Built-in commands
+    are those commands you create. External commands are
+    basically programs that already exist that you simply call
+    on.</font></p>
+    <p><font size="2" face="Verdana">Finally, step (4) loops back
+    around to step (1) unless the user chose to exit.</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Built-in Commands</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your shell will support
+    three built-in commands:</font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">cd</font><font color="#000000" size="2" face="Verdana"> - this command
+        will change the CWD. It will take zero or one argument.
+        If given zero arguments, assume the user wants to go back
+        to their home directory. If given one argument, attempt
+        to change to the directory specified. If you aren't able
+        to change to the directory specified, print an error.
+        Also, if the user provides more than one argument, print
+        an error. Note that if a new directory is switched to,
+        your prompt will change to reflect that this new
+        directory is your CWD.</font></p>
+        <p><font color="#FF0000" size="2" face="Verdana">echo</font><font color="#000000" size="2" face="Verdana"> - this command
+        will print back to the screen what the user types. It
+        takes zero or more arguments. For example, typing </font><font color="#FF0000" size="2" face="Verdana">echo 1 2 3</font><font color="#000000" size="2" face="Verdana"> will print </font><font color="#FF0000" size="2" face="Verdana">1 2 3</font><font color="#000000" size="2" face="Verdana">.</font></p>
+        <p><font color="#FF0000" size="2" face="Verdana">exit</font><font color="#000000" size="2" face="Verdana"> - this command
+        will exit your shell.</font></p>
+    </blockquote>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>External Commands</strong></font></p>
+
+<blockquote>
+    <p><font color="#000000" size="2" face="Verdana">Your shell
+    will be able to execute external commands using the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> function. External
+    commands are commands like </font><font color="#FF0000" size="2" face="Verdana">ls</font><font color="#000000" size="2" face="Verdana">, </font><font color="#FF0000" size="2" face="Verdana">cat</font><font color="#000000" size="2" face="Verdana">, </font><font color="#FF0000" size="2" face="Verdana">cp</font><font color="#000000" size="2" face="Verdana">, </font><font color="#FF0000" size="2" face="Verdana">mv</font><font color="#000000" size="2" face="Verdana">, </font><font color="#FF0000" size="2" face="Verdana">mkdir</font><font color="#000000" size="2" face="Verdana">, etc. that already exist for you to
+    call on. You are not allowed to use any other function to
+    execute external commands. The </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> function requires a
+    command path and arguments. For example, if you type </font><font color="#FF0000" size="2" face="Verdana">ls -a</font><font color="#000000" size="2" face="Verdana">, both </font><font color="#FF0000" size="2" face="Verdana">ls</font><font color="#000000" size="2" face="Verdana"> and </font><font color="#FF0000" size="2" face="Verdana">-a</font><font color="#000000" size="2" face="Verdana"> are arguments that
+    you will send as the second argument to </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana">. However, </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> will need the path
+    to the command for its first argument. If the first argument
+    of your command (i.e. the command name itself) contains a </font><font color="#FF0000" size="2" face="Verdana">/</font><font color="#000000" size="2" face="Verdana"> character, you will
+    assume that you were given the path to the command.
+    Otherwise, you will search the paths listed in the </font><font color="#FF0000" size="2" face="Verdana">PATH</font><font color="#000000" size="2" face="Verdana"> environment variable
+    until you find a location that contains the external command.
+    You will then prepend this path on to your command and pass
+    it as the first argument to </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana">. For example, </font><font color="#FF0000" size="2" face="Verdana">ls</font><font color="#000000" size="2" face="Verdana"> might be located in
+    the </font><font color="#FF0000" size="2" face="Verdana">/bin</font><font color="#000000" size="2" face="Verdana"> directory. So,
+    you'll pass </font><font color="#FF0000" size="2" face="Verdana">"/bin/ls"</font><font color="#000000" size="2" face="Verdana"> to </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> for its first
+    argument. In any event, if you can't find the command, print
+    an error.</font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana"><strong>File
+Redirection</strong></font></p>
+
+<blockquote>
+    <p><font color="#000000" size="2" face="Verdana">Your shell
+    will support the file redirection operators </font><font color="#FF0000" size="2" face="Verdana">&lt;</font><font color="#000000" size="2" face="Verdana"> and </font><font color="#FF0000" size="2" face="Verdana">&gt;</font><font color="#000000" size="2" face="Verdana">. Each of these
+    operators expects a file afterwards. You can assume one will
+    be given (but not necessarily one that exists). You can
+    assume at most one </font><font color="#FF0000" size="2" face="Verdana">&lt;</font><font color="#000000" size="2" face="Verdana"> and at most one </font><font color="#FF0000" size="2" face="Verdana">&gt;</font><font color="#000000" size="2" face="Verdana"> in any one command. You can also
+    assume that redirection will only be used with external
+    commands, not built-in commands. Note that neither the
+    redirection operators nor their respective files are part of
+    a command's arguments. For example, if the user types </font><font color="#FF0000" size="2" face="Verdana">ls -a &gt; files.txt</font><font color="#000000" size="2" face="Verdana">, you won't send the </font><font color="#FF0000" size="2" face="Verdana">&gt;</font><font color="#000000" size="2" face="Verdana"> and </font><font color="#FF0000" size="2" face="Verdana">files.txt</font><font color="#000000" size="2" face="Verdana"> to the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> function. Instead,
+    as future notes will show, redirection must be handled by
+    you.</font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana"><strong>Environment
+Variables</strong></font></p>
+
+<blockquote>
+    <p><font color="#000000" size="2" face="Verdana">Your shell
+    will support environment variables. The shell detects an
+    environment variable if something has a </font><font color="#FF0000" size="2" face="Verdana">$ </font><font color="#000000" size="2" face="Verdana">in front of it. For
+    example, </font><font color="#FF0000" size="2" face="Verdana">$HOME</font><font color="#000000" size="2" face="Verdana"> corresponds to your
+    home directory stored in environment variable </font><font color="#FF0000" size="2" face="Verdana">HOME</font><font color="#000000" size="2" face="Verdana">. You will have to
+    expand these variables before running commands. That is, you
+    will replace these variables with their values. For example,
+    if I'm running my shell from my own account and I type </font><font color="#FF0000" size="2" face="Verdana">ls</font><font color="#000000" size="2" face="Verdana"> </font><font color="#FF0000" size="2" face="Verdana">$HOME</font><font color="#000000" size="2" face="Verdana">, I will first
+    replace </font><font color="#FF0000" size="2" face="Verdana">$HOME</font><font color="#000000" size="2" face="Verdana"> with </font><font color="#FF0000" size="2" face="Verdana">/home/grads/porter</font><font color="#000000" size="2" face="Verdana"> before executing the
+    command. Note that </font><font color="#FF0000" size="2" face="Verdana">/home/grads/porter</font><font color="#000000" size="2" face="Verdana"> isn't something I would hard code.
+    In other words, don't hard code values for any environment
+    variable. Instead, get their value by using the proper
+    library function. You can assume whitespace around each
+    environment variable. For example, you won't expect to see </font><font color="#FF0000" size="2" face="Verdana">$HOME$HOME</font><font color="#000000" size="2" face="Verdana">.</font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana"><strong>Reading
+and Parsing Commands</strong></font></p>
+
+<blockquote>
+    <p align="left"><font size="2" face="Verdana">The first step
+    in creating your shell is to read and parse the command
+    entered. You will find the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/fgets.html#" target="_blank"><font size="2" face="Verdana">fgets()</font></a><font size="2" face="Verdana"> and </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strtok.html#" target="_blank"><font size="2" face="Verdana">strtok()</font></a><font size="2" face="Verdana"> functions useful in reading and
+    parsing commands, respectively. Let's look at an example in </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project1/tokenize.c" target="_blank"><font size="2" face="Verdana">tokenize.c</font></a><font size="2" face="Verdana">. This program will continuously ask for a
+    command to be entered. The command is then read using </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/fgets.html#" target="_blank"><font size="2" face="Verdana">fgets()</font></a><font size="2" face="Verdana">. </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/fgets.html#" target="_blank"><font size="2" face="Verdana">fgets()</font></a><font size="2" face="Verdana"> will read characters into a buffer
+    until a newline is encountered or until 80 characters are
+    encountered. Notice I gave it a buffer with 81 slots. This is
+    because you want to reserve 1 slot for the terminating null
+    character. Note that </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/fgets.html#" target="_blank"><font size="2" face="Verdana">fgets()</font></a><font size="2" face="Verdana"> doesn't get rid of the newline
+    character.</font></p>
+    <p align="left"><font size="2" face="Verdana">Now, we have
+    our command as entered. However, we need a break it out into
+    individual components separated by whitespace. This is where </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strtok.html#" target="_blank"><font size="2" face="Verdana">strtok()</font></a><font size="2" face="Verdana"> comes in. </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strtok.html#" target="_blank"><font size="2" face="Verdana">strtok()</font></a><font size="2" face="Verdana"> essentially separates the command
+    based on delimiters. In this case, our delimiters are any of
+    the whitespace characters. This string of delimiters gets
+    passed to </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strtok.html#" target="_blank"><font size="2" face="Verdana">strtok()</font></a><font size="2" face="Verdana"> so it knows what to divide on. The
+    function also takes care of both leading and trailing
+    whitespace in my example, something else we want. You'll
+    notice the first time around you pass it the actual string.
+    However, on successive times, you pass it NULL. It will
+    return NULL when it has nothing more to process. Here is an
+    example output:</font></p>
+    <blockquote>
+        <p align="left"><font color="#FF0000" size="2" face="Verdana">Enter command: ls -a &gt; file.txt<br>
+        <br>
+        This is the command as entered: ls -a &gt; file.txt<br>
+        <br>
+        <br>
+        This is the command parsed into whitespace-delimited
+        tokens (one per line):<br>
+        <br>
+        ls<br>
+        -a<br>
+        &gt;<br>
+        file.txt</font><font size="2" face="Verdana"><br>
+        </font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">So, you are now able to read
+    in commands and break them into whitespace-delimited tokens.
+    However, a few questions remain. First, how do you print your
+    username and the current working directory in the command
+    prompt? Your username is stored in the environment variable </font><font color="#FF0000" size="2" face="Verdana">USER</font><font size="2" face="Verdana">. To get the value of this variable,
+    you use the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/getenv.html" target="_blank"><font size="2" face="Verdana">getenv()</font></a><font size="2" face="Verdana"> function. You pass this function the
+    name of the variable who's value you're looking for and it
+    returns the value. Note that the </font><font color="#FF0000" size="2" face="Verdana">$</font><font size="2" face="Verdana">
+    the user types in front of the environment variable is only
+    to indicate an environment variable to your shell. Without
+    it, your shell would think </font><font color="#FF0000" size="2" face="Verdana">USER</font><font size="2" face="Verdana"> had no special meaning. Hence, you will only
+    pass </font><font color="#FF0000" size="2" face="Verdana">"USER"</font><font size="2" face="Verdana"> to this function, not </font><font color="#FF0000" size="2" face="Verdana">"$USER"</font><font size="2" face="Verdana">. As for the CWD, you use another
+    function called </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/getcwd.html" target="_blank"><font size="2" face="Verdana">getcwd()</font></a><font size="2" face="Verdana">. I will leave it up to you to
+    experiment with these functions. Note that </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/fgets.html#" target="_blank"><font size="2" face="Verdana">fgets()</font></a><font size="2" face="Verdana">, </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/getenv.html" target="_blank"><font size="2" face="Verdana">getenv()</font></a><font size="2" face="Verdana">, and </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/getcwd.html" target="_blank"><font size="2" face="Verdana">getcwd()</font></a><font size="2" face="Verdana"> all have ways of indicating errors.
+    So, you might want to check for these errors before
+    proceeding.</font></p>
+    <p><font size="2" face="Verdana">So, you now know how to read
+    in commands, break them into whitespace-delimited tokens,
+    expand environment variables, and get the current working
+    directory. You're ready to execute your command, right? Not
+    quite. Once you have your command separated into tokens, you
+    will need to go through and process each token and add it to
+    your list of arguments. So, what I recommend is that you
+    create a command structure to pass around to various
+    functions. Inside the structure, you can hold the command
+    arguments in an array, the argument count, and information
+    dealing with input and/or output redirection, such as the
+    file names to redirect to. Here is the basic idea for
+    processing the tokens:</font></p>
+    <blockquote>
+        <p><font size="2" face="Verdana">(1) If the token is the </font><font color="#FF0000" size="2" face="Verdana">&lt;</font><font size="2" face="Verdana"> or </font><font color="#FF0000" size="2" face="Verdana">&gt;</font><font size="2" face="Verdana"> operator, you know that file redirection
+        is needed. You should expect the next token to contain
+        the name of the redirect file. You do not add the </font><font color="#FF0000" size="2" face="Verdana">&lt;</font><font size="2" face="Verdana"> or </font><font color="#FF0000" size="2" face="Verdana">&gt;</font><font size="2" face="Verdana"> operators, nor their respective filenames
+        to the list of command arguments.</font></p>
+        <p><font size="2" face="Verdana">(2) If the token starts
+        with a </font><font color="#FF0000" size="2" face="Verdana">$</font><font size="2" face="Verdana">,
+        you know you have an environment variable. Use </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/getenv.html" target="_blank"><font size="2" face="Verdana">getenv()</font></a><font size="2" face="Verdana"> to get its value and add this
+        value to the list of command arguments.</font></p>
+        <p><font size="2" face="Verdana">(3) Otherwise, you can
+        simply add the token to the list of command arguments and
+        go back to step (1) while you still have tokens to
+        process.</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">I think an example would
+    help. Let's say the user types </font><font color="#FF0000" size="2" face="Verdana">ls -a $HOME &gt; files.txt</font><font size="2" face="Verdana">. After tokenizing, you are left
+    with:</font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">ls<br>
+        -a<br>
+        $HOME<br>
+        &gt;<br>
+        files.txt</font><font size="2" face="Verdana"><br>
+        </font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">Now, you go through each
+    token and decide what to add to the list of arguments. You
+    first add </font><font color="#FF0000" size="2" face="Verdana">ls</font><font size="2" face="Verdana">. You
+    then add </font><font color="#FF0000" size="2" face="Verdana">-a</font><font size="2" face="Verdana">. You then notice the </font><font color="#FF0000" size="2" face="Verdana">$HOME</font><font size="2" face="Verdana">. You get the value of </font><font color="#FF0000" size="2" face="Verdana">/home/grads/porter</font><font size="2" face="Verdana"> (for example) and add this to your
+    list of arguments. You notice the </font><font color="#FF0000" size="2" face="Verdana">&gt;</font><font size="2" face="Verdana"> and </font><font color="#FF0000" size="2" face="Verdana">files.txt</font><font size="2" face="Verdana">. You record in your command structure that
+    you will redirect output to a file named </font><font color="#FF0000" size="2" face="Verdana">files.txt</font><font color="#000000" size="2" face="Verdana">. Your final list of
+    arguments looks like this:</font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">ls<br>
+        -a<br>
+        /home/grads/porter</font></p>
+    </blockquote>
+    <p><font color="#000000" size="2" face="Verdana">You are now
+    ready to execute your command.</font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana"><strong>Executing
+Commands</strong></font></p>
+
+<blockquote>
+    <p align="left"><font size="2" face="Verdana">Now that you
+    have your command stored in some type of structure, you are
+    ready to execute. Remember that there are two main types of
+    commands, built-in and external. The built-in commands are
+    straightforward. The external commands require a little more
+    work.</font></p>
+    <p align="left"><font size="2" face="Verdana"><strong>Built-in
+    Commands</strong></font></p>
+    <blockquote>
+        <p align="left"><font color="#FF0000" size="2" face="Verdana">cd</font><font size="2" face="Verdana"> -
+        remember that this command changes the CWD. In order to
+        do this, you will use the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/chdir.html" target="_blank"><font size="2" face="Verdana">chdir()</font></a><font size="2" face="Verdana"> function. Just pass in the name
+        of the directory you want to change to. Remember that
+        there are various cases where you need to error. First,
+        if the user gives more than one argument, it's an error.
+        Next, the user may give an invalid directory. </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/chdir.html" target="_blank"><font size="2" face="Verdana">chdir()</font></a><font size="2" face="Verdana"> will let you know if it failed
+        or not, so you can check for this. Remember, also, that
+        changing the CWD should also change your command prompt.
+        Ex:</font></p>
+        <blockquote>
+            <p align="left"><font color="#FF0000" size="2" face="Verdana">porter@myshell:/home/grads&gt;cd ..<br>
+            porter@myshell:/home&gt;cd grads<br>
+            porter@myshell:/home/grads&gt;</font></p>
+        </blockquote>
+        <p align="left"><font color="#FF0000" size="2" face="Verdana">echo</font><font size="2" face="Verdana">
+        - remember that this command simply prints to the screen
+        what the user typed after the </font><font color="#FF0000" size="2" face="Verdana">echo</font><font size="2" face="Verdana">. For example, </font><font color="#FF0000" size="2" face="Verdana">echo 1 2 3</font><font size="2" face="Verdana"> should print </font><font color="#FF0000" size="2" face="Verdana">1 2 3</font><font size="2" face="Verdana">. So, you simply use a normal
+        print statement (like a </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/printf.html" target="_blank"><font size="2" face="Verdana">printf()</font></a><font size="2" face="Verdana">) to implement this command.</font></p>
+        <p align="left"><font color="#FF0000" size="2" face="Verdana">exit</font><font size="2" face="Verdana">
+        - this is the easiest command to implement. You simply
+        exit your program.<br>
+        </font></p>
+    </blockquote>
+    <p align="left"><font size="2" face="Verdana"><strong>External
+    Commands</strong></font></p>
+    <blockquote>
+        <p><font size="2" face="Verdana">With external commands,
+        you have to do a little more work. But, the good news is
+        that you don't have to implement any type of special
+        functionality for a command. Instead, you simply call on
+        a pre-existing (presumably) command. The first step to
+        executing a pre-existing command is to first check if the
+        first argument (the command name itself) contains a </font><font color="#FF0000" size="2" face="Verdana">/</font><font size="2" face="Verdana">. You can use the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strchr.html" target="_blank"><font size="2" face="Verdana">strchr()</font></a><font size="2" face="Verdana"> function to do this. If it does,
+        you don't have to do any type of searching for the
+        command. If it doesn't, you do have to search for the
+        command. To do this, you will get the value of the </font><font color="#FF0000" size="2" face="Verdana">PATH</font><font size="2" face="Verdana"> environment variable. This
+        variable contains various paths separated by a </font><font color="#FF0000" size="2" face="Verdana">:</font><font size="2" face="Verdana">. You will search from left to
+        right until you find a path that contains your command.
+        If you don't, of course you error. We already know how to
+        parse based on whitespace. We can make a simple
+        modification to parse based on a </font><font color="#FF0000" size="2" face="Verdana">:</font><font size="2" face="Verdana">. Take a look at </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project1/tokenize2.c" target="_blank"><font size="2" face="Verdana">tokenize2.c</font></a><font size="2" face="Verdana">. There are some important things to
+        notice. First, all I did was change the whitespace
+        delimiter to a </font><font color="#FF0000" size="2" face="Verdana">:</font><font size="2" face="Verdana">
+        delimiter. Second, and this is most important, I used the
+        </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strcpy.html" target="_blank"><font size="2" face="Verdana">strcpy()</font></a><font size="2" face="Verdana"> function to copy a string into a
+        buffer. You will have to do something similar. The reason
+        is that when you use </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/getenv.html" target="_blank"><font size="2" face="Verdana">getenv()</font></a><font size="2" face="Verdana"> to get the value of an
+        environment variable, you are not allowed to modify that
+        actual string. If you do, bad things can happen. So,
+        you'll need to be sure you make a copy of any value from </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/getenv.html" target="_blank"><font size="2" face="Verdana">getenv()</font></a><font size="2" face="Verdana"> that you need to modify before
+        using that value. </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strtok.html" target="_blank"><font size="2" face="Verdana">strtok()</font></a><font size="2" face="Verdana">, of course, modifies the string.
+        Hence, the copy. </font></p>
+        <p><font size="2" face="Verdana">So, you now know how to
+        get the possible paths to an external command. Let's say
+        the user types </font><font color="#FF0000" size="2" face="Verdana">ls -a</font><font size="2" face="Verdana">.
+        We use </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strchr.html" target="_blank"><font size="2" face="Verdana">strchr()</font></a><font size="2" face="Verdana"> on </font><font color="#FF0000" size="2" face="Verdana">ls</font><font size="2" face="Verdana"> to see that there is no </font><font color="#FF0000" size="2" face="Verdana">/</font><font size="2" face="Verdana">. Remember that we're only
+        looking at the command name itself for a </font><font color="#FF0000" size="2" face="Verdana">/</font><font size="2" face="Verdana">, not the entire command. </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strchr.html" target="_blank"><font size="2" face="Verdana">strchr()</font></a><font size="2" face="Verdana"> tells us that we're going to
+        have search the </font><font color="#FF0000" size="2" face="Verdana">PATH </font><font color="#000000" size="2" face="Verdana">environment variable for the </font><font color="#FF0000" size="2" face="Verdana">ls</font><font color="#000000" size="2" face="Verdana"> command. To do
+        so, we get the value of the variable, make a copy of it,
+        then break it into colon-delimited tokens. We then start
+        searching each token. Let's say our first token is </font><font color="#FF0000" size="2" face="Verdana">/bin</font><font color="#000000" size="2" face="Verdana">. We need to
+        check if </font><font color="#FF0000" size="2" face="Verdana">/bin</font><font color="#000000" size="2" face="Verdana"> contains the </font><font color="#FF0000" size="2" face="Verdana">ls</font><font color="#000000" size="2" face="Verdana"> command. To do this, we append </font><font color="#FF0000" size="2" face="Verdana">ls</font><font color="#000000" size="2" face="Verdana"> on to the path
+        to get </font><font color="#FF0000" size="2" face="Verdana">/bin/ls</font><font color="#000000" size="2" face="Verdana">. To append, use </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/strcat.html" target="_blank"><font size="2" face="Verdana">strcat()</font></a><font color="#000000" size="2" face="Verdana">. Now, the
+        obvious question is how do we know if </font><font color="#FF0000" size="2" face="Verdana">/bin/ls</font><font color="#000000" size="2" face="Verdana"> exists? Yet
+        another function, of course. The </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/stat.html" target="_blank"><font size="2" face="Verdana">stat()</font></a><font color="#000000" size="2" face="Verdana"> function will
+        let you test for a file's existence. You simply give it
+        the path to the file and a pointer to a structure to hold
+        the file information.</font></p>
+        <p><font color="#000000" size="2" face="Verdana">And
+        that's all there is to it...well almost! At this point,
+        you can finally execute the command using </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana">. There is
+        another issue, however. </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> will replace the
+        calling process with a new one corresponding to the
+        command you want to execute. Obviously, we don't want to
+        replace our shell process. So, the solution is to create
+        a copy of our main process and let </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> replace this
+        copy. This process, known as a child process, will run
+        and our main process, known as the parent process, will
+        wait on it to finish. Take a look at </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project1/fork.c" target="_blank"><font size="2" face="Verdana">fork.c</font></a><font color="#000000" size="2" face="Verdana">. There are a few things to
+        discuss here. First, the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/fork.html" target="_blank"><font size="2" face="Verdana">fork()</font></a><font color="#000000" size="2" face="Verdana"> function will
+        create a child process that is a copy of the our parent
+        process. Now, both processes will be executing in
+        parallel after the call. So, how do we know which process
+        we are currently in? We use the return value of </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/fork.html" target="_blank"><font size="2" face="Verdana">fork()</font></a><font color="#000000" size="2" face="Verdana">. If it returns a
+        value less than 0, it failed, so it didn't even make the
+        child process. Usually, this won't happen. Otherwise, it
+        will return a 0 to the child process and something
+        greater than 0 (the child's process ID (PID)) to the
+        parent process. Hence, you only execute your command in
+        the child process case using </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana">. Note that </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> shouldn't
+        return. That's why I put an error message beneath it,
+        just in case it does. You can also see an example command
+        structure. First, I have an array of strings, with the
+        final string being NULL. In this case, I'm simply trying
+        to execute the command </font><font color="#FF0000" size="2" face="Verdana">sleep 5</font><font color="#000000" size="2" face="Verdana">. Now, this array
+        is what you pass to </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/execv.html" target="_blank"><font size="2" face="Verdana">execv()</font></a><font color="#000000" size="2" face="Verdana"> for the second
+        argument. But, remember the first argument must be the
+        path to </font><font color="#FF0000" size="2" face="Verdana">sleep</font><font color="#000000" size="2" face="Verdana">. So, I hard-coded in </font><font color="#FF0000" size="2" face="Verdana">/bin/sleep</font><font color="#000000" size="2" face="Verdana"> for illustration
+        purposes. Now, the parent process won't receive a 0
+        return value, hence it will never enter any of that code.
+        Instead, it will wait for the child to finish. To wait,
+        you use the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/waitpid.html" target="_blank"><font size="2" face="Verdana">waitpid()</font></a><font color="#000000" size="2" face="Verdana"> function.
+        Essentially, it stops the parent process from doing
+        anything until the child process finishes. In other
+        words, we want to wait until the child is done sleeping
+        for 5 seconds before proceeding. In the next project,
+        we'll talk about running processes in the background,
+        where we don't have to wait before proceeding. In any
+        event, you must make sure you have the </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/waitpid.html" target="_blank"><font size="2" face="Verdana">waitpid()</font></a><font color="#000000" size="2" face="Verdana">, because when
+        the child process terminates, this function is necessary
+        to free up the process entry in the process table. If you
+        don't free it, you'll leave a so-called </font><a href="http://en.wikipedia.org/wiki/Zombie_process" target="_blank"><font size="2" face="Verdana">zombie
+        process</font></a><font color="#000000" size="2" face="Verdana"> running.</font></p>
+    </blockquote>
+    <p><font color="#000000" size="2" face="Verdana"><strong>File
+    Redirection</strong></font></p>
+    <blockquote>
+        <p><font color="#000000" size="2" face="Verdana">File
+        redirection is the final piece of the puzzle. If you're
+        keeping some type of command structure, by the time you
+        go to execute in the child process, you will be able to
+        decide if input should come from a file and/or output
+        should go to a file. Let's look at </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project1/redirection.c" target="_blank"><font size="2" face="Verdana">redirection.c</font></a><font color="#000000" size="2" face="Verdana">. It looks fairly
+        simple. It simply redirects output to a file (instead of
+        to the screen like it normally would go). The key
+        functions are </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/open.html" target="_blank"><font size="2" face="Verdana">open()</font></a><font color="#000000" size="2" face="Verdana"> and </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/dup2.html" target="_blank"><font size="2" face="Verdana">dup2()</font></a><font color="#000000" size="2" face="Verdana">. </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/open.html" target="_blank"><font size="2" face="Verdana">open()</font></a><font color="#000000" size="2" face="Verdana"> will try to open
+        a particular file. You can read about the various flags
+        to give it. In this case, I am telling it to open a file
+        for output, creating it if it doesn't exist. Now, to
+        understand </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/dup2.html" target="_blank"><font size="2" face="Verdana">dup2()</font></a><font color="#000000" size="2" face="Verdana">, you have to
+        understand file descriptors. Basically, file descriptors
+        correspond to files. By default, UNIX assigns a few for
+        you. One of them is stdout, which corresponds to the
+        screen...usually. stdout corresponds to the file
+        descriptor 1. What </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/dup2.html" target="_blank"><font size="2" face="Verdana">dup2()</font></a><font color="#000000" size="2" face="Verdana"> will do is allow
+        you to change where stdout will map to. In this case, I
+        give it the file descriptor of the file I just opened.
+        So, from this point on, when my program tries to write to
+        stdout, it will go to the file instead of the screen.
+        That's why the print statement at the end shows up in
+        output.txt instead of on the screen. Reading from a file
+        is simliar, except you open the file for reading purposes
+        instead of writing purposes. Then, you use </font><a href="http://www.opengroup.org/onlinepubs/9699919799/functions/dup2.html" target="_blank"><font size="2" face="Verdana">dup2()</font></a><font color="#000000" size="2" face="Verdana"> with 0, which
+        corresponds to stdin in UNIX.</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">Ok, this should get you
+    going in the right direction for the project. I don't want to
+    give away everything, so there are some aspects that you may
+    need to research. However, you have the basic ideas and links
+    to the functions you will want to use. Good luck!</font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana"><strong>Sample
+Runs</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Here are some sample runs
+    that you can use to compare your output to. Note that your
+    output doesn't have to match exactly, but it couldn't hurt.</font></p>
+    <p><font size="2" face="Verdana"><strong>Built-in Commands</strong></font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">cd</font></p>
+        <blockquote>
+            <p><font color="#FF0000" size="2" face="Verdana">porter@myshell:/home/grads/porter&gt;cd
+            ..<br>
+            porter@myshell:/home/grads&gt;cd ..<br>
+            porter@myshell:/home&gt;cd ..<br>
+            porter@myshell:/&gt;cd .<br>
+            porter@myshell:/&gt;cd<br>
+            porter@myshell:/home/grads/porter&gt;cd /<br>
+            porter@myshell:/&gt;cd / /<br>
+            cd: Too many arguments.<br>
+            porter@myshell:/&gt;cd<br>
+            porter@myshell:/home/grads/porter&gt;cd Fun<br>
+            porter@myshell:/home/grads/porter/Fun&gt;cd ..<br>
+            porter@myshell:/home/grads/porter&gt;cd FunAgain<br>
+            FunAgain: No such file or directory.<br>
+            porter@myshell:/home/grads/porter&gt;cd ./Fun<br>
+            porter@myshell:/home/grads/porter/Fun&gt;cd<br>
+            porter@myshell:/home/grads/porter&gt;cd
+            /home/grads/porter/Fun<br>
+            porter@myshell:/home/grads/porter/Fun&gt;cd $HOME<br>
+            porter@myshell:/home/grads/porter&gt;</font><font size="2" face="Verdana"><br>
+            </font></p>
+        </blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">echo</font></p>
+        <blockquote>
+            <p><font color="#FF0000" size="2" face="Verdana">porter@myshell:/home/grads/porter&gt;echo
+            <br>
+            <br>
+            porter@myshell:/home/grads/porter&gt;echo Hello
+            There!<br>
+            Hello There! <br>
+            porter@myshell:/home/grads/porter&gt;echo 1 2 3<br>
+            1 2 3 <br>
+            porter@myshell:/home/grads/porter&gt;echo $HOME<br>
+            /home/grads/porter <br>
+            porter@myshell:/home/grads/porter&gt;echo $USER<br>
+            porter <br>
+            porter@myshell:/home/grads/porter&gt;echo $FUN<br>
+            $FUN: Undefined variable.<br>
+            porter@myshell:/home/grads/porter&gt;echo $USER is at
+            $HOME<br>
+            porter is at /home/grads/porter </font><font size="2" face="Verdana"><br>
+            </font></p>
+        </blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">exit</font></p>
+        <blockquote>
+            <p><font color="#FF0000" size="2" face="Verdana">porter@myshell:/home/grads/porter&gt;exit<br>
+            porter@linprog2.cs.fsu.edu:~&gt;</font></p>
+        </blockquote>
+    </blockquote>
+    <p><font size="2" face="Verdana"><strong>External Commands</strong></font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">porter@myshell:/home/grads/porter&gt;ls<br>
+        a.out background.c fork.c Fun myshell myshell.c
+        redirection.c tokenize2.c tokenize.c<br>
+        porter@myshell:/home/grads/porter&gt;/bin/ls<br>
+        a.out background.c fork.c Fun myshell myshell.c
+        redirection.c tokenize2.c tokenize.c<br>
+        porter@myshell:/home/grads/porter&gt;/ls<br>
+        /ls: Command not found.<br>
+        porter@myshell:/home/grads/porter&gt;./ls<br>
+        ./ls: Command not found.<br>
+        porter@myshell:/home/grads/porter&gt;ls -al<br>
+        total 160<br>
+        drwx------ 7 porter CS-Grads 4096 Dec 14 20:26 .<br>
+        drwxr-xr-x 296 root CS-Grads 12288 Sep 13 11:22 ..<br>
+        -rw------- 1 porter CS-Grads 1673 Nov 3 18:20
+        .abbrev_defs<br>
+        -rw------- 1 porter CS-Grads 577 Nov 10 21:41 .alias<br>
+        -rwx------ 1 porter CS-Grads 14074 Dec 14 20:17 a.out<br>
+        -rw-r--r-- 1 porter CS-Grads 1794 Dec 3 00:52
+        background.c<br>
+        -rw------- 1 porter CS-Grads 207 Nov 26 18:01
+        .bash_history<br>
+        drwxr-xr-x 2 porter CS-Majors 4096 Jan 18 2006 .bin<br>
+        -rw-r--r-- 1 porter CS-Majors 570 Oct 28 2007 .cshrc<br>
+        -rw------- 1 porter CS-Grads 365 Oct 12 21:13 .emacs<br>
+        -rw-r--r-- 1 porter CS-Grads 797 Dec 10 19:07 fork.c<br>
+        -rw------- 1 porter CS-Grads 15 Sep 21 03:23 .forward<br>
+        drwx------ 3 porter CS-Grads 4096 Dec 6 21:58 Fun<br>
+        -rw------- 1 porter CS-Grads 6373 Dec 10 19:56 .history<br>
+        -rw------- 1 porter CS-Grads 35 Nov 26 18:01 .lesshst<br>
+        drwx------ 2 porter CS-Grads 4096 Sep 26 2007 .lisp<br>
+        -rw-r--r-- 1 porter CS-Majors 1131 Aug 24 2005 .login<br>
+        -rwx------ 1 porter CS-Grads 14898 Dec 6 21:56 myshell<br>
+        -rw-r--r-- 1 porter CS-Grads 13709 Dec 14 20:16 myshell.c<br>
+        -rw-r--r-- 1 porter CS-Grads 637 Dec 10 19:28
+        redirection.c<br>
+        drwxr-xr-x 2 porter CS-Majors 4096 Dec 16 2004 .scripts<br>
+        -rw-r--r-- 1 porter CS-Majors 1348 Sep 25 2006 .setup<br>
+        -rw------- 1 porter CS-Grads 8 Sep 15 18:02 .sh_history<br>
+        drwx------ 2 porter CS-Majors 4096 Sep 10 2005 .ssh<br>
+        -rw-r--r-- 1 porter CS-Majors 898 Nov 23 19:24 .tcshrc<br>
+        -rw-r--r-- 1 porter CS-Grads 751 Dec 10 18:41 tokenize2.c<br>
+        -rw-r--r-- 1 porter CS-Grads 1073 Dec 8 00:23 tokenize.c<br>
+        -rw------- 1 porter CS-Grads 777 Dec 14 20:17 .Xauthority<br>
+        porter@myshell:/home/grads/porter&gt;date<br>
+        Tue Dec 14 20:27:39 EST 2010<br>
+        porter@myshell:/home/grads/porter&gt;cat myshell.c<br>
+        I'M NOT THAT CRAZY!<br>
+        porter@myshell:/home/grads/porter&gt;ls &gt; output.txt<br>
+        porter@myshell:/home/grads/porter&gt;cat output.txt<br>
+        a.out<br>
+        background.c<br>
+        fork.c<br>
+        Fun<br>
+        myshell<br>
+        myshell.c<br>
+        output.txt<br>
+        redirection.c<br>
+        tokenize2.c<br>
+        tokenize.c<br>
+        porter@myshell:/home/grads/porter&gt;ls &lt; output.txt<br>
+        a.out background.c fork.c Fun myshell myshell.c
+        output.txt redirection.c tokenize2.c tokenize.c<br>
+        porter@myshell:/home/grads/porter&gt;ls &lt; output2.txt<br>
+        output2.txt: No such file or directory.<br>
+        porter@myshell:/home/grads/porter&gt;ls &lt; output.txt
+        &gt; output2.txt<br>
+        porter@myshell:/home/grads/porter&gt;more output2.txt<br>
+        a.out<br>
+        background.c<br>
+        fork.c<br>
+        Fun<br>
+        myshell<br>
+        myshell.c<br>
+        output2.txt<br>
+        output.txt<br>
+        redirection.c<br>
+        tokenize2.c<br>
+        tokenize.c<br>
+        porter@myshell:/home/grads/porter&gt;ls $KDEDIR <br>
+        bin games java JMF lib libexec lost+found share tmp<br>
+        etc include javasrc kerberos lib64 local sbin src X11R6<br>
+        porter@myshell:/home/grads/porter&gt;</font></p>
+    </blockquote>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Grading</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your code uses good
+    programming practices (30%).</font></p>
+    <p><font size="2" face="Verdana">Your shell supports external
+    commands (30%).</font></p>
+    <p><font size="2" face="Verdana">Your shell properly prints
+    the command prompt (10%).</font></p>
+    <p><font size="2" face="Verdana">Your shell supports the
+    three built-in commands (10%).</font></p>
+</blockquote>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your shell supports file
+    redirection (10%).</font></p>
+    <p><font size="2" face="Verdana">Your shell supports
+    environment variables (10%).</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Submitting</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Submit two files: </font><font color="#FF0000" size="2" face="Verdana">myshell.c</font><font size="2" face="Verdana"> containing your source code, and </font><font color="#FF0000" size="2" face="Verdana">makefile</font><font size="2" face="Verdana"> which builds an executable named </font><font color="#FF0000" size="2" face="Verdana">myshell.x</font><font size="2" face="Verdana">. Do this with </font><font color="#FF0000" size="2" face="Verdana">~cop4610p/submitscripts/proj1submit.sh</font><font size="2" face="Verdana">.</font></p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+
+<iframe id="rdbIndicator" width="100%" height="270" border="0" src="./project1_files/indicator.html" style="display: none; border: 0; position: fixed; left: 0; top: 0; z-index: 2147483647"></iframe></body></html>

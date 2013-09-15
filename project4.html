@@ -1,0 +1,479 @@
+
+<!-- saved from url=(0047)http://ww2.cs.fsu.edu/~porter/cop4610/project4/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Operating Systems</title>
+<link type="text/css" rel="stylesheet" href="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/style.css"><script type="text/javascript" charset="utf-8" src="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/page_context.js"></script><style type="text/css"></style></head>
+
+<body bgcolor="#FFFFFF" screen_capture_injected="true">
+
+<p><a href="http://www.cs.fsu.edu/~lacher/courses/COP4610/"><font size="2" face="Verdana">Operating Systems</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/index.html"><font size="2" face="Verdana">Project Pages</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="./project4_files/project4.html"><font size="2" face="Verdana">Project 4</font></a></p>
+
+<h1 align="left"><font size="3" face="Verdana">Project 4-Clone
+Utility</font></h1>
+
+<p><font size="2" face="Verdana"><strong>Description and
+Objectives</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">In this project, you will
+    gain experience with working with files and directories using
+    the UNIX API. You will perform copy, remove, and file
+    attribute operations using API functions rather than existing
+    utilities. You will also gain experience using recursion.</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Details</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your task is to create a
+    utility that will clone the contents of a given directory on
+    to another directory. Your utility will be called as follows:</font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">clone.x
+        &lt;source&gt; &lt;dest&gt;</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">where </font><font color="#FF0000" size="2" face="Verdana">&lt;source&gt;</font><font size="2" face="Verdana"> represents a source directory and </font><font color="#FF0000" size="2" face="Verdana">&lt;dest&gt;</font><font size="2" face="Verdana"> represents a destination directory. You can assume the source and destination directories are actual directories (or don't exist). You can't assume, however, whether you will be given an absolute path or relative path.
+   Your utility should follow this basic plan:</font></p>
+</blockquote>
+
+<blockquote>
+    <blockquote>
+        <p><font size="2" face="Verdana">(1) If the source
+        directory doesn't exist, print an error.</font></p>
+        <p><font size="2" face="Verdana">(2) If the destination
+        directory doesn't exist, create it.</font></p>
+        <p><font size="2" face="Verdana">(3) Copy all files /
+        directories in the source directory to the destination
+        directory (recursively). Print a message for each file /
+        directory copied.</font></p>
+        <p><font size="2" face="Verdana">(4) Set permissions,
+        owner, and group for each destination file / directory to
+        that of the source file / directory. Print a message for
+        each file / directory attribute changed.</font></p>
+        <p><font size="2" face="Verdana">(5) For 10 points extra credit, remove any files /
+        directories in the destination directory not in the
+        source directory (recursively). Print a message for each
+        file / directory removed. But, wait, there is a twist! If you delete files you shouldn't (such as other student's submissions or grading scripts), you will instead lose up to 10 points!</font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana">Let's go over each of these.
+    </font></p>
+    <p><font size="2" face="Verdana">(1) and (2) are
+    self-explanatory. </font></p>
+    <p><font size="2" face="Verdana">For (3), copying files will
+    require the use of low-level reading and writing functions.
+    Note that you can't simply call the </font><font color="#FF0000" size="2" face="Verdana">cp</font><font size="2" face="Verdana"> command. In fact, you aren't allowed
+    to make use of any preexisting utilities. You may only use
+    whatever functions the UNIX API provides. Directories may
+    contain more files and directories. Hence, you will need to
+    copy recursively. It is possible to do it iteratively, but I
+    want you to do it recursively. Also, do not "copy the
+    copy." That is, if the source directory contains the
+    destination directory, you want to ignore the destination
+    directory when searching the source directory. Also, you want
+    to copy over files no matter if they already exist in the
+    destination directory. This ensures that the destination
+    directory has the same files as the source directory without
+    having to implement extra logic to compare files.</font></p>
+    <p><font size="2" face="Verdana">For (4), you need to make
+    sure the destination files and directories match permissions,
+    owner, and group with the source files and directories.</font></p>
+    <p><font size="2" face="Verdana">For (5), I could tell you, but then I would have to kill you.</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Cloning</strong></font></p>
+
+<blockquote>
+    <p align="left"><font size="2" face="Verdana">Copying files
+    from one directory to another may seem like a trivial task
+    when using existing utilities like </font><font color="#FF0000" size="2" face="Verdana">cp</font><font color="#000000" size="2" face="Verdana">. But, it takes a bit
+    more work when simply using the API. So, let's come up with a
+    plan for the basic outline in the project description. </font></p>
+    <p align="left"><font size="2" face="Verdana"><strong>Step 1</strong></font></p>
+    <blockquote>
+        <p align="left"><font size="2" face="Verdana">Your first
+        step is to decide if the source directory exists. You
+        know how to do that by using the </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/chdir.html#" target="_blank"><font size="2" face="Verdana">chdir()</font></a><font color="#000000" size="2" face="Verdana"> function. This
+        is an easy step. Note that you may be given either a
+        relative or absolute path here, but it's best to work
+        with absolute paths inside your program. </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/getcwd.html#" target="_blank"><font size="2" face="Verdana">getcwd()</font></a><font size="2" face="Verdana"> may be useful for obtaining the
+        absolute path. </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html#" target="_blank"><font size="2" face="Verdana">realpath()</font></a><font size="2" face="Verdana"> is an easier option that others prefer. If you use this, be sure to place <font color="#FF0000" size="2" face="Verdana">#define _GNU_SOURCE</font> at the top of your program.
+    </font></p></blockquote><font size="2" face="Verdana">
+    <p align="left"><font size="2" face="Verdana"><strong>Step 2</strong></font></p>
+    </font><blockquote><font size="2" face="Verdana">
+        </font><p align="left"><font size="2" face="Verdana"><font size="2" face="Verdana">Your second
+        step is to decide if the destination directory exists. If
+        not, create it. You can use a similar idea to above, but
+        there is also an </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/mkdir.html#" target="_blank"><font size="2" face="Verdana">mkdir()</font></a><font color="#000000" size="2" face="Verdana"> function that
+        will create the directory if it doesn't exist. Just what
+        you need. Again, another easy step. Note that you may be
+        given either a relative or absolute path here, but it's
+        best to work with absolute paths inside your program. </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/getcwd.html#" target="_blank"><font size="2" face="Verdana">getcwd()</font></a><font size="2" face="Verdana"> may be useful for obtaining the
+        absolute path. </font></font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html#" target="_blank"><font size="2" face="Verdana">realpath()</font></a><font size="2" face="Verdana"> is an easier option that others prefer. If you use this, be sure to place <font color="#FF0000" size="2" face="Verdana">#define _GNU_SOURCE</font> at the top of your program.
+    </font></p></blockquote><font size="2" face="Verdana">
+    <p align="left"><font size="2" face="Verdana"><strong>Step 3</strong></font></p>
+    <blockquote>
+        <p align="left"><font size="2" face="Verdana">Your third
+        step is the start of the real work. You have the source
+        and destination directories, but how do you actually copy
+        the files and directories over? Furthermore, how do you
+        actually get the files and directories that exist in the
+        source? There is a function that exists called </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/readdir.html#" target="_blank"><font size="2" face="Verdana">readdir()</font></a><font color="#000000" size="2" face="Verdana">. Read over it
+        carefully. The great news is that there is a pretty
+        useful example on that page under the documentation. The
+        example shows how to read all the files and directories
+        inside of a given directory. By read, I mean get the
+        names of them. I would recommend starting with this code
+        as a base. Now, from the first two assignments, you know
+        how to detect whether something is a file or directory
+        using the </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html#" target="_blank"><font size="2" face="Verdana">stat()</font></a><font color="#000000" size="2" face="Verdana"> function. In
+        fact, you'll want to use the </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html#" target="_blank"><font size="2" face="Verdana">stat()</font></a><font color="#000000" size="2" face="Verdana"> function a lot
+        as it gives you most of the info you need about a file or
+        directory to complete this assignment. But, why do you
+        care about distinguishing between a file and a directory?
+        Let's talk about files first. When you copy a file from
+        one location to another, you are actually duplicating the
+        file data. That is, you are reading from the source file
+        and writing to the destination file. How to do that? The </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html#" target="_blank"><font size="2" face="Verdana">read()</font></a><font color="#000000" size="2" face="Verdana"> and </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html#" target="_blank"><font size="2" face="Verdana">write()</font></a><font color="#000000" size="2" face="Verdana"> functions of
+        course. Study those pages. Directories, however, are a
+        bit different. For every directory you encounter in the
+        source directory , you simply want to "make"
+        that directory in the destination directory (i.e. </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/mkdir.html#" target="_blank"><font size="2" face="Verdana">mkdir()</font></a><font color="#000000" size="2" face="Verdana">).</font></p>
+    </blockquote>
+    <blockquote>
+        <p align="left"><font size="2" face="Verdana">All of this
+        seems simple enough right? But, the recursive nature is
+        something you now have to take in to account. Any time
+        you encounter a directory, you want to recursively search
+        that directory. In other words, you want to repeat the
+        process above until you have no more directories.
+        Recursion in C basically amounts to having a function
+        call itself. It's likely your function that performs the
+        copying task above will take in a source directory and a
+        destination directory. So, when you "re"call
+        it, you'll just be giving it a new source directory and a
+        new destination directory.</font></p>
+        <p align="left"><font size="2" face="Verdana">Finally, be
+        very careful that you ignore the <font color="#FF0000" size="2" face="Verdana">.</font> and <font color="#FF0000" size="2" face="Verdana">..</font> filenames or you'll run into an infinite loop. Also, as mentioned above, don't try  to "copy the
+        copy." For example, say the source directory is
+        called </font><font color="#FF0000" size="2" face="Verdana">mystuff </font><font size="2" face="Verdana">and the backup directory is called </font><font color="#FF0000" size="2" face="Verdana">mystuff/backup</font><font size="2" face="Verdana">. If you don't ignore the </font><font color="#FF0000" size="2" face="Verdana">mystuff/backup</font><font size="2" face="Verdana"> directory when reading from your
+        </font><font color="#FF0000" size="2" face="Verdana">mystuff</font><font size="2" face="Verdana"> directory, your program will
+        start by creating the </font><font color="#FF0000" size="2" face="Verdana">mystuff/backup</font><font size="2" face="Verdana"> directory if it doesn't exist.
+        But, since your source directory now has a </font><font color="#FF0000" size="2" face="Verdana">backup</font><font size="2" face="Verdana"> directory (and we're copying all
+        directories over), the </font><font color="#FF0000" size="2" face="Verdana">mystuff/backup</font><font size="2" face="Verdana"> directory will get a </font><font color="#FF0000" size="2" face="Verdana">backup </font><font color="#000000" size="2" face="Verdana">directory</font><font color="#FF0000" size="2" face="Verdana"> </font><font color="#000000" size="2" face="Verdana">(i.e.</font><font color="#FF0000" size="2" face="Verdana">
+        mystuff/backup/backup</font><font size="2" face="Verdana">).
+        This will also cause an infinite loop.</font></p>
+    </blockquote>
+    <p align="left"><font size="2" face="Verdana"><strong>Step 4</strong></font></p>
+    <blockquote>
+        <p align="left"><font size="2" face="Verdana">Now that
+        you have all the files and directories copied over, it's
+        time to match the permissions, owner, and group. Note
+        that you could do this as you copy each file over. Again,
+        the </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html#" target="_blank"><font size="2" face="Verdana">stat()</font></a><font color="#000000" size="2" face="Verdana"> function is
+        handy here. Remember that the </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html#" target="_blank"><font size="2" face="Verdana">stat()</font></a><font color="#000000" size="2" face="Verdana"> function gives
+        you a structure with information in it. You want file
+        permissions, owner id, and group ip. Study </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_stat.h.html" target="_blank"><font size="2" face="Verdana">this</font></a><font color="#000000" size="2" face="Verdana"> to see that
+        everything is there for you. However, the permissions may
+        take a bit of manipulation (no pun intended). But, the
+        basic idea is to gather the information from the source
+        file or directory and apply it to the destination file or
+        directory. Functions </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/chmod.html#" target="_blank"><font size="2" face="Verdana">chmod()</font></a><font color="#000000" size="2" face="Verdana"> and </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/chown.html#" target="_blank"><font size="2" face="Verdana">chown()</font></a><font color="#000000" size="2" face="Verdana"> will be of use.</font></p>
+    </blockquote>
+    <p align="left"><font size="2" face="Verdana"><strong>Step 5</strong></font></p>
+    <blockquote>
+        <p align="left"><font size="2" face="Verdana">Extra credit.  But, remember to be careful so you don't actually lose points!</font></p>
+    </blockquote>
+    <p align="left"><font size="2" face="Verdana">Ok, this should
+    get you going in the right direction. You'll notice that I
+    gave less specific code this time. The reason is that there
+    is less code to write for this project than the previous
+    ones. Once you figure it out, it should be smooth sailing. I
+    want you to have to investigate the API more and figure out
+    how to use the various functions for this project.</font></p>
+</font></blockquote><font size="2" face="Verdana">
+
+<p><font size="2" face="Verdana"><strong>Sample Runs</strong></font></p>
+
+<p><font size="2" face="Verdana">Here are some sample runs that
+you can use to compare your output to. Note that your output
+doesn't have to match exactly, but it couldn't hurt.</font></p>
+
+<p><font color="#000000" size="2" face="Verdana">First, let's see
+the directory structure to backup:</font></p>
+
+<blockquote>
+    <p><font color="#FF0000" size="2" face="Verdana">porter@linprog3.cs.fsu.edu:~/stuff&gt;ls
+    -l * */*<br>
+    -rw------- 1 porter CS-Grads 5895 Mar 24 2011 clone.c<br>
+    -rw------- 1 porter CS-Grads 7512 Mar 24 18:21 clone.o<br>
+    -rwx------ 1 porter CS-Grads 12655 Mar 24 18:21 clone.x<br>
+    -rw------- 1 porter CS-Grads 310 Mar 24 15:43 makefile<br>
+    <br>
+    music:<br>
+    total 12<br>
+    drwx------ 2 porter CS-Grads 4096 Mar 24 15:41 cd1<br>
+    drwx------ 2 porter CS-Grads 4096 Mar 24 15:41 cd2<br>
+    drwx------ 2 porter CS-Grads 4096 Mar 24 15:41 cd3<br>
+    <br>
+    music/cd1:<br>
+    total 4<br>
+    -rw------- 1 porter CS-Grads 29 Mar 24 15:41 song.txt<br>
+    <br>
+    music/cd2:<br>
+    total 4<br>
+    -rw------- 1 porter CS-Grads 29 Mar 24 15:41 song.txt<br>
+    <br>
+    music/cd3:<br>
+    total 4<br>
+    -rw------- 1 porter CS-Grads 29 Mar 24 15:41 song.txt</font><font color="#000000" size="2" face="Verdana"><br>
+    </font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana">Now, let's see
+what happens when trying to clone an invalid directory:</font></p>
+
+<blockquote>
+    <p><font color="#FF0000" size="2" face="Verdana">porter@linprog3.cs.fsu.edu:~/stuff&gt;clone.x
+    mystuff backup<br>
+    mystuff is not a valid source directory.</font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana">Now, let's see
+what happens when we try to clone a directory on to itself:</font></p>
+
+<blockquote>
+    <p><font color="#FF0000" size="2" face="Verdana">porter@linprog3.cs.fsu.edu:~/stuff&gt;clone.x
+    . .</font><font color="#000000" size="2" face="Verdana"><br>
+    </font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana">You see that
+nothing happens, which is good. Ok, let's do an actual clone:</font></p>
+
+<blockquote>
+    <p><font color="#FF0000" size="2" face="Verdana">porter@linprog3.cs.fsu.edu:~/stuff&gt;clone.x
+    . stuffbackup<br>
+    Creating directory /home/grads/porter/stuff/stuffbackup<br>
+    Setting permissions for /home/grads/porter/stuff/stuffbackup:
+    700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup: 79038, 299<br>
+    Copying /home/grads/porter/stuff/makefile to
+    /home/grads/porter/stuff/stuffbackup/makefile<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/makefile: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/makefile: 79038, 299<br>
+    Creating directory /home/grads/porter/stuff/stuffbackup/music<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music: 79038, 299<br>
+    Creating directory
+    /home/grads/porter/stuff/stuffbackup/music/cd1<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd1: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd1: 79038, 299<br>
+    Copying /home/grads/porter/stuff/music/cd1/song.txt to
+    /home/grads/porter/stuff/stuffbackup/music/cd1/song.txt<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd1/song.txt: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd1/song.txt:
+    79038, 299<br>
+    Creating directory
+    /home/grads/porter/stuff/stuffbackup/music/cd3<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd3: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd3: 79038, 299<br>
+    Copying /home/grads/porter/stuff/music/cd3/song.txt to
+    /home/grads/porter/stuff/stuffbackup/music/cd3/song.txt<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd3/song.txt: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd3/song.txt:
+    79038, 299<br>
+    Creating directory
+    /home/grads/porter/stuff/stuffbackup/music/cd2<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd2: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd2: 79038, 299<br>
+    Copying /home/grads/porter/stuff/music/cd2/song.txt to
+    /home/grads/porter/stuff/stuffbackup/music/cd2/song.txt<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd2/song.txt: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd2/song.txt:
+    79038, 299<br>
+    Copying /home/grads/porter/stuff/clone.c to
+    /home/grads/porter/stuff/stuffbackup/clone.c<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/clone.c: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/clone.c: 79038, 299<br>
+    Copying /home/grads/porter/stuff/clone.o to
+    /home/grads/porter/stuff/stuffbackup/clone.o<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/clone.o: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/clone.o: 79038, 299<br>
+    Copying /home/grads/porter/stuff/clone.x to
+    /home/grads/porter/stuff/stuffbackup/clone.x<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/clone.x: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/clone.x: 79038, 299<br>
+    </font></p>
+</blockquote>
+
+<p><font color="#FF0000" size="2" face="Verdana">Now, let's take
+a look at the cloned directory:<br>
+</font></p>
+
+<blockquote>
+    <p><font color="#FF0000" size="2" face="Verdana">porter@linprog3.cs.fsu.edu:~/stuff&gt;cd
+    stuffbackup<br>
+    porter@linprog3.cs.fsu.edu:~/stuff/stuffbackup&gt;ls -l * */*<br>
+    -rw------- 1 porter CS-Grads 5895 Mar 24 18:22 clone.c<br>
+    -rw------- 1 porter CS-Grads 7512 Mar 24 18:22 clone.o<br>
+    -rwx------ 1 porter CS-Grads 12655 Mar 24 18:22 clone.x<br>
+    -rw------- 1 porter CS-Grads 310 Mar 24 18:22 makefile<br>
+    <br>
+    music:<br>
+    total 12<br>
+    drwx------ 2 porter CS-Grads 4096 Mar 24 18:22 cd1<br>
+    drwx------ 2 porter CS-Grads 4096 Mar 24 18:22 cd2<br>
+    drwx------ 2 porter CS-Grads 4096 Mar 24 18:22 cd3<br>
+    <br>
+    music/cd1:<br>
+    total 4<br>
+    -rw------- 1 porter CS-Grads 29 Mar 24 18:22 song.txt<br>
+    <br>
+    music/cd2:<br>
+    total 4<br>
+    -rw------- 1 porter CS-Grads 29 Mar 24 18:22 song.txt<br>
+    <br>
+    music/cd3:<br>
+    total 4<br>
+    -rw------- 1 porter CS-Grads 29 Mar 24 18:22 song.txt<br>
+    <br>
+    </font></p>
+</blockquote>
+
+<p><font color="#000000" size="2" face="Verdana">You see that it
+matches the original. You also see that there is no "copy of
+a copy" issue.</font></p>
+
+<p><font color="#000000" size="2" face="Verdana">Now, let's see
+what happens if there is something in the destination directory
+not in the source directory:</font></p>
+
+<blockquote>
+    <p><font color="#FF0000" size="2" face="Verdana">porter@linprog2.cs.fsu.edu:~/stuff&gt;clone.x
+    . stuffbackup<br>
+    Setting permissions for /home/grads/porter/stuff/stuffbackup:
+    700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup: 79038, 299<br>
+    Copying /home/grads/porter/stuff/makefile to
+    /home/grads/porter/stuff/stuffbackup/makefile<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/makefile: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/makefile: 79038, 299<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music: 79038, 299<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd1: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd1: 79038, 299<br>
+    Copying /home/grads/porter/stuff/music/cd1/song.txt to
+    /home/grads/porter/stuff/stuffbackup/music/cd1/song.txt<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd1/song.txt: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd1/song.txt:
+    79038, 299<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd3: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd3: 79038, 299<br>
+    Copying /home/grads/porter/stuff/music/cd3/song.txt to
+    /home/grads/porter/stuff/stuffbackup/music/cd3/song.txt<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd3/song.txt: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd3/song.txt:
+    79038, 299<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd2: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd2: 79038, 299<br>
+    Copying /home/grads/porter/stuff/music/cd2/song.txt to
+    /home/grads/porter/stuff/stuffbackup/music/cd2/song.txt<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/music/cd2/song.txt: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/music/cd2/song.txt:
+    79038, 299<br>
+    Copying /home/grads/porter/stuff/clone.c to
+    /home/grads/porter/stuff/stuffbackup/clone.c<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/clone.c: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/clone.c: 79038, 299<br>
+    Copying /home/grads/porter/stuff/clone.o to
+    /home/grads/porter/stuff/stuffbackup/clone.o<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/clone.o: 600<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/clone.o: 79038, 299<br>
+    Copying /home/grads/porter/stuff/clone.x to
+    /home/grads/porter/stuff/stuffbackup/clone.x<br>
+    Setting permissions for
+    /home/grads/porter/stuff/stuffbackup/clone.x: 700<br>
+    Setting user and group for
+    /home/grads/porter/stuff/stuffbackup/clone.x: 79038, 299<br>
+    Removing
+    /home/grads/porter/stuff/stuffbackup/video/video1.txt<br>
+    Removing
+    /home/grads/porter/stuff/stuffbackup/video/video2.txt<br>
+    Removing
+    /home/grads/porter/stuff/stuffbackup/video/video3.txt<br>
+    Removing /home/grads/porter/stuff/stuffbackup/video<br>
+    </font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Grading</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your code uses good
+    programming practices (30%).</font></p>
+    <p><font size="2" face="Verdana">Your program correctly
+    copies all files / directories from the source directory to
+    the destination directory (40%).</font></p>
+    <p><font size="2" face="Verdana">Your program duplicates the
+    permissions, owner, and group from the source files /
+    directories to the destination files / directories (30%).</font></p>
+    <p><font size="2" face="Verdana">Your program removes all
+    files / directories in the destination directory that are not
+    in source directory (+ / - 10%).</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Submitting</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Submit two files: </font><font color="#FF0000" size="2" face="Verdana">clone.c</font><font size="2" face="Verdana"> containing your source code, and </font><font color="#FF0000" size="2" face="Verdana">makefile</font><font size="2" face="Verdana"> which builds an executable named </font><font color="#FF0000" size="2" face="Verdana">clone.x</font><font size="2" face="Verdana">. Do this with </font><font color="#FF0000" size="2" face="Verdana">~cop4610p/submitscripts/proj4submit.sh</font><font size="2" face="Verdana">.</font></p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+
+</font><iframe id="rdbIndicator" width="100%" height="270" border="0" src="./project4_files/indicator.html" style="display: none; border: 0; position: fixed; left: 0; top: 0; z-index: 2147483647"></iframe></body></html>

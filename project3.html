@@ -1,0 +1,270 @@
+
+<!-- saved from url=(0047)http://ww2.cs.fsu.edu/~porter/cop4610/project3/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Operating Systems</title>
+<link type="text/css" rel="stylesheet" href="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/style.css"><script type="text/javascript" charset="utf-8" src="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/page_context.js"></script><style type="text/css"></style></head>
+
+<body bgcolor="#FFFFFF" screen_capture_injected="true">
+
+<p><a href="http://www.cs.fsu.edu/~lacher/courses/COP4610/"><font size="2" face="Verdana">Operating Systems</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/index.html"><font size="2" face="Verdana">Project Pages</font></a><font size="2" face="Verdana">&nbsp;::&nbsp;</font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project3"><font size="2" face="Verdana">Project 3</font></a></p>
+
+<h1 align="left"><font size="3" face="Verdana">Project
+3-Concurrency with Threads</font></h1>
+
+<p><font size="2" face="Verdana"><strong>Description and
+Objectives</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">In this project, you will
+    gain experience with concurrency using threads.</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Details</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">This project consists of two
+    parts that we'll call Part I and Part II. Each part is
+    designed to operate separately. That is, don't combine the
+    parts into a single program.</font></p>
+</blockquote>
+
+<blockquote>
+    <p><font color="#000000" size="2" face="Verdana"><strong>Part
+    I</strong></font></p>
+    <blockquote>
+        <p><font color="#000000" size="2" face="Verdana">Your
+        task is to do the Matrix Multiplication Project starting
+        on page 178 in your book. The book gives you all the
+        details you need. However, a couple things to remember.
+        First, the book explains various ways to use threads in
+        C, Win32, and Java. Remember that your programs are in C,
+        so you'll have to use the pthreads option. Second,
+        remember that this program is completely separate from
+        Part II. Third, since this is just for illustration
+        purposes, simply predefine the matrices exactly as the
+        book has done, rather than asking for them from the
+        keyboard or a file. Finally, when building a pthreads app
+        with gcc, make sure to specify the </font><font color="#FF0000" size="2" face="Verdana">-lpthread</font><font color="#000000" size="2" face="Verdana"> argument.</font></p>
+    </blockquote>
+    <p><font color="#000000" size="2" face="Verdana"><strong>Part
+    II</strong></font></p>
+    <blockquote>
+        <p><font color="#000000" size="2" face="Verdana">Your
+        task is to do the Producer-Consumer Project starting on
+        page 274 in your book. The book gives you all the details
+        you need. However, a couple things to remember. First,
+        the book explains various ways to use threads in C,
+        Win32, and Java. Remember that your programs are in C, so
+        you'll have to use the pthreads option. Second, remember
+        that this program is completely separate from Part I.
+        Third, stick with the book's 5-element buffer size.  Fourth, the book says the threads should sleep for a random time, but let's restrict it to between 1 and 5 seconds (i.e. generate a random number between 1 and 5).
+        Fifth, your program should be able to be ran as follows:</font></p>
+        <blockquote>
+            <p><font color="#FF0000" size="2" face="Verdana">producer-consumer.x
+            &lt;sleep time&gt; &lt;num producer threads&gt; &lt;num consumer threads&gt;</font></p>
+        </blockquote>
+        <p><font color="#000000" size="2" face="Verdana">For
+        example,</font></p>
+        <blockquote>
+            <p><font color="#FF0000" size="2" face="Verdana">producer-consumer.x
+            5 3 8</font></p>
+        </blockquote>
+        <p><font color="#000000" size="2" face="Verdana">runs
+        your program with a sleep time of 5 seconds, 3 producer
+        threads, and 8 consumer threads. Finally, when building a
+        pthreads app with gcc, make sure to specify the </font><font color="#FF0000" size="2" face="Verdana">-lpthread</font><font color="#000000" size="2" face="Verdana"> argument.</font></p>
+    </blockquote>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Matrix Multiplication</strong></font></p>
+
+<blockquote>
+    <p align="left"><font size="2" face="Verdana">In project 2,
+    we talked about concurrent processes. Now, we will look at
+    concurrent threads. Threads have less overhead than processes
+    and are ideal for long running tasks and divide-and-conquer
+    situations. The downside of threads is they can get complex
+    depending on the task. The book pretty much gives you all the
+    details you need on what to do. The basic idea is to
+    divide-and-conquer to multiply two matrices. First, you
+    should simply use the fixed matrices the book gives as an
+    example. This simplifies matters. The main idea is to see
+    threads at work. Also note the book's strategy of dynamically
+    getting memory for each structure passed to the thread body.
+    You really don't have to do this. You can simply declare a
+    fixed-size array of structures at the start of your main()
+    function if you want. Either way is fine. But, remember that
+    dynamically allocated memory must be free'd, in this case
+    with the </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/free.html" target="_blank"><font size="2" face="Verdana">free()</font></a><font size="2" face="Verdana"> function.</font></p>
+    <p align="left"><font size="2" face="Verdana">So, let's talk
+    about threads. There's a lot we can discuss. But, the good
+    news is that you can find everything you need to know for
+    this part at </font><a href="https://computing.llnl.gov/tutorials/pthreads/" target="_blank"><font size="2" face="Verdana">https://computing.llnl.gov/tutorials/pthreads/</font></a><font size="2" face="Verdana">. Read sections 1 through 5-3. In
+    fact, the last example at </font><a href="https://computing.llnl.gov/tutorials/pthreads/#Joining" target="_blank"><font size="2" face="Verdana">https://computing.llnl.gov/tutorials/pthreads/#Joining</font></a><font size="2" face="Verdana"> will basically tell you all you need
+    to know for this part. Essentially, you see it's creating a
+    certain number of threads, giving them some data to work
+    with, and waiting for each one to finish. The BusyWork()
+    function is the thread body. Your thread body's busy work
+    will be to work on finding one element of matrix C given some
+    information about matrices A and B. Note that you're using
+    shared resources, matrices A, B, and C. However, you're only
+    reading from A and B, which is safe to do simultaneously.
+    What about C? Multiple threads could be writing to C at the
+    same time. Don't we need some type of mutex to stop this? The
+    answer is no. The reason is that each thread is working on a
+    specific element of C. Hence, we can assume no two threads
+    will try to write to the same memory location at the same
+    time. That's the good news, since things just became much
+    simpler.</font></p>
+    <p><font size="2" face="Verdana">In fact, it's time to move
+    on to Part II!</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Producer-Consumer</strong></font></p>
+
+<blockquote>
+    <p align="left"><font size="2" face="Verdana">We now move to
+    Part II of your project. After completing Part I, you will
+    have a general idea of how to work with threads. But, there
+    are some cases where we have to protect access to a shared
+    resource that could be accessed by multiple threads
+    simultaneously. In Part I, we saw that reading simultaneously
+    is ok, and writing to different memory locations
+    simulatenously is ok. But, in this part, we will have a case
+    where there is potential to read a location while it is being
+    written, write to a location while it is being read, or write
+    to a location while it is being written. These are all
+    scenarios we don't want.</font></p>
+    <p align="left"><font size="2" face="Verdana">To deal with
+    the problem of accessing a shared resource simulatenously, we
+    can use a mutex. Read section 6 at </font><a href="https://computing.llnl.gov/tutorials/pthreads/" target="_blank"><font size="2" face="Verdana">https://computing.llnl.gov/tutorials/pthreads/</font></a><font size="2" face="Verdana">. Only one thread can be inside of a
+    mutex at one time. This is guaranteed by only allowing one to
+    aquire the mutex lock at a time. The others have to wait.
+    When the thread that aquired the mutex finishes, it releases
+    the mutex, letting some other waiting thread in. Hence, we
+    guarantee none of the aforementioned problems occur.</font></p>
+    <p align="left"><font size="2" face="Verdana">But, what about
+    our particular task at hand here? The producer-consumer
+    problem is a well-documented problem involving a fixed-size
+    buffer. In fact, you can think of the buffer as queue. A
+    queue is a FIFO structure, first-in, first-out. The problem
+    is having multiple threads trying to insert and remove items
+    simultaneously. The book practially gives you the majority of
+    the code or pseudocode you need to solve the problem. Let's
+    talk about some of it. First, we see we have a producer
+    thread which constantly tries to insert items in an endless
+    loop. We also have a consumer thread which tries to remove
+    items in an endless loop. Each thread sleeps between
+    insertions or removals. The reason you need the sleep is
+    because an endless loop will eat up CPU very fast. Compare </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project3/endless.c" target="_blank"><font size="2" face="Verdana">endless.c</font></a><font size="2" face="Verdana"> and </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project3/endlesswithsleep.c" target="_blank"><font size="2" face="Verdana">endlesswithsleep.c</font></a><font size="2" face="Verdana">. In the first example, I loop
+    forever with no sleeps. Open a separate linprog window and
+    type </font><font color="#FF0000" size="2" face="Verdana">top</font><font size="2" face="Verdana"> and you'll see the CPU usage
+    skyrocket. In the second example, you'll see no such CPU
+    issues due to the </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/sleep.html" target="_blank"><font size="2" face="Verdana">sleep()</font></a><font size="2" face="Verdana"> function.</font></p>
+    <p align="left"><font size="2" face="Verdana">Next, the book
+    talks about using a mutex to protect the buffer. But, we need
+    something else in addition to the mutex called a semaphore. </font><a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/semaphore.h.html" target="_blank"><font size="2" face="Verdana">semaphore.h</font></a><font size="2" face="Verdana"> contains just what we need. A
+    semaphore is like a mutex except it lets a specific number of
+    threads in at a time. The idea here is to let as many threads
+    in as are available slots to be inserted into or removed
+    from. The book shows how to create a semaphore initialized to
+    5. They also show how a mutex can be represented as a
+    semaphore initialized to 1. The 1 would mean only 1 thread
+    can be in at once. But, the pthreads library provides a mutex
+    you can use, so you don't have to use a semaphore for protecting the buffer access.
+    However, you will still need two sempahores, one to keep track of the number of empty spots, one to keep track of the number of full spots. </font></p>
+    <p align="left"><font size="2" face="Verdana">Finally, as
+    stated in the project description, your program should be run
+    with command-line arguments. Take a look at </font><a href="http://ww2.cs.fsu.edu/~porter/cop4610/project3/command-line.c" target="_blank"><font size="2" face="Verdana">command-line.c</font></a><font size="2" face="Verdana">. The main difference is that instead of </font><font color="#FF0000" size="2" face="Verdana">int main()</font><font size="2" face="Verdana">, you see </font><font color="#FF0000" size="2" face="Verdana">int main(int argc,
+    char** argv)</font><font size="2" face="Verdana">. This is an
+    alternate way to define the function whereby you can access
+    the command-line arguments. Here is an example output:</font></p>
+    <blockquote>
+        <p align="left"><font color="#FF0000" size="2" face="Verdana">porter@linprog3.cs.fsu.edu:~&gt;command-line.x
+        1 2 3<br>
+        The command-line arguments (one per line): <br>
+        <br>
+        command-line.x<br>
+        1<br>
+        2<br>
+        3</font><font color="#FF0000" size="2"><br>
+        </font></p>
+    </blockquote>
+    <p align="left"><font color="#000000" size="2" face="Verdana">Notice
+    that the command itself is the first argument. For your
+    program, you only care about everything after that,
+    specifically the three arguments for the sleep time, number
+    of producer threads, and number of consumer threads.</font></p>
+    <p><font size="2" face="Verdana">Ok, this should get you
+    going in the right direction for the project. I don't want to
+    give away everything, so there are some aspects that you may
+    need to research. However, you have the basic ideas and links
+    to the functions you will want to use. Good luck!</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Sample Runs</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Here are some sample runs
+    that you can use to compare your output to. Note that your
+    output doesn't have to match exactly, but it couldn't hurt.</font></p>
+    <p><font size="2" face="Verdana"><strong>matrix.x</strong></font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">Matrix
+        A:<br>
+        1 4 <br>
+        2 5 <br>
+        3 6 <br>
+        <br>
+        Matrix B:<br>
+        8 7 6 <br>
+        5 4 3 <br>
+        <br>
+        Matrix C = AB<br>
+        28 23 18 <br>
+        41 34 27 <br>
+        54 45 36 </font></p>
+    </blockquote>
+    <p><font size="2" face="Verdana"><strong>producer-consumer.x</strong></font></p>
+    <blockquote>
+        <p><font color="#FF0000" size="2" face="Verdana">porter@linprog3.cs.fsu.edu:~&gt;producer-consumer.x
+        5 3 3<br>
+        Producer produced 1717758523.<br>
+        Consumer consumed 1717758523.<br>
+        Producer produced 1955031891.<br>
+        Consumer consumed 1955031891.<br>
+        Producer produced 1709058983.<br>
+        Producer produced 85790847.<br>
+        Consumer consumed 1709058983.<br>
+        Consumer consumed 85790847.<br>
+        Producer produced 249810206.<br>
+        Consumer consumed 249810206.</font><font color="#000000" size="2" face="Verdana"><br>
+        </font></p>
+    </blockquote>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Grading</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Your code uses good
+    programming practices (30%).</font></p>
+    <p><font size="2" face="Verdana">Your Matrix Multiplication
+    Project works correctly (30%).</font></p>
+    <p><font size="2" face="Verdana">Your Producer-Consumer
+    Project works correctly (40%).</font></p>
+</blockquote>
+
+<p><font size="2" face="Verdana"><strong>Submitting</strong></font></p>
+
+<blockquote>
+    <p><font size="2" face="Verdana">Submit four files: </font><font color="#FF0000" size="2" face="Verdana">matrix.c</font><font size="2" face="Verdana"> containing your source code for Part
+    I, </font><font color="#FF0000" size="2" face="Verdana">buffer.h</font><font size="2" face="Verdana"> and </font><font color="#FF0000" size="2" face="Verdana">producer-consumer.c</font><font size="2" face="Verdana"> containing your source code for Part
+    II, and </font><font color="#FF0000" size="2" face="Verdana">makefile</font><font size="2" face="Verdana"> which builds executables named </font><font color="#FF0000" size="2" face="Verdana">matrix.x</font><font color="#000000" size="2" face="Verdana"> and </font><font color="#FF0000" size="2" face="Verdana">producer-consumer.x</font><font size="2" face="Verdana">. Do this with </font><font color="#FF0000" size="2" face="Verdana">~cop4610p/submitscripts/proj3submit.sh</font><font size="2" face="Verdana">.</font></p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+
+<iframe id="rdbIndicator" width="100%" height="270" border="0" src="./project3_files/indicator.html" style="display: none; border: 0; position: fixed; left: 0; top: 0; z-index: 2147483647"></iframe></body></html>
